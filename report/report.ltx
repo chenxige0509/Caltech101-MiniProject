@@ -1,0 +1,417 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+\title{A Comparative Study of CNN and HOG Models for Caltech-101 Image Classification}
+\author{Chenxi Ge \\ Harvard University \\ \href{mailto:steven_ge@fas.harvard.edu}{\texttt{steven\_ge@fas.harvard.edu}} \\ \url{https://github.com/chenxige0509/Caltech101-Mini-Project}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We address image classification on the Caltech-101 dataset using both transfer learning with deep networks and classical pipelines based on hand-crafted features. We compare three pretrained architectures (ResNet-18, EfficientNet-B0, and Vision Transformer (ViT-B/16)) with frozen backbones and a trainable head, alongside HOG features with SVM and logistic regression. We ablate input resolution, data augmentation, and optimizer choice, and report accuracy, top-5 accuracy, and per-class precision, recall, and F1. ViT-B/16 achieves the best test accuracy (95.93\%); ResNet-18 and EfficientNet-B0 reach 92.55\% and 94.62\% at 224$\times$224; classical HOG+LR reaches 66.05\% at 64$\times$64.
+\end{abstract}
+
+%==============================================================================
+\section{Introduction}
+\label{sec:intro}
+%==============================================================================
+We consider image classification on Caltech-101~\cite{caltech101} with 101 object categories. Understanding how design choices (resolution, augmentation, optimizer) and feature type (hand-crafted vs.\ learned) affect performance is useful for low-resource or interpretability-sensitive settings. We use (i) transfer learning from ImageNet-pretrained~\cite{imagenet} deep networks (ResNet-18~\cite{resnet}, EfficientNet-B0~\cite{efficientnet}, ViT-B/16~\cite{vit}) with only the classification head trained, and (ii) classical pipelines using HOG features~\cite{hog} with SVM and logistic regression. The main comparisons are summarized in Table~\ref{tab:intro}. We describe data processing and model architectures in Section~\ref{sec:methods}, experimental setup and results in Section~\ref{sec:experiments} and Section~\ref{sec:results}, and discuss these four dimensions in Section~\ref{sec:discussion}; Section~\ref{sec:conclusion} concludes.
+
+\begin{table}[H]
+\centering
+\caption{Comparison dimensions and options considered in this study.}
+\label{tab:intro}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Dimension & Options \\
+\midrule
+Image size & 64$\times$64, 128$\times$128, 224$\times$224 (where applicable; ViT fixed at 224) \\
+Data augmentation & With vs.\ without (CNNs only) \\
+Feature extractor & HOG (hand-crafted) vs.\ CNN (ResNet-18, EfficientNet-B0, ViT-B/16) \\
+Optimizer & SGD vs.\ Adam (and AdamW) for CNN; N/A for HOG \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section{Methods}
+\label{sec:methods}
+%==============================================================================
+This section covers data processing (splits, preprocessing, augmentation) and the architectures of all models used.
+
+%----------------------------------------------------------------------------
+\subsection{Data Processing}
+\label{sec:data}
+%----------------------------------------------------------------------------
+\paragraph{Dataset and splits.}
+We use the Caltech-101 dataset~\cite{caltech101}: 101 object categories, 8,677 images after excluding the \texttt{BACKGROUND\_Google} clutter class. Class sizes are imbalanced (roughly 31--800 images per category). With a fixed random seed we perform a stratified 70/15/15 split into train (6,073), validation (1,302), and test (1,302) sets; the same split is used for all models and ablations.
+
+\paragraph{Preprocessing for deep learning.}
+Images are loaded in RGB and resized to a target resolution (64, 128, or 224 pixels per side, depending on the experiment). For training we apply random resized crop (scale 0.8--1.0), random horizontal flip, and color jitter (brightness, contrast, saturation), then convert to tensor and normalize with ImageNet~\cite{imagenet} mean and standard deviation. For validation and test we only resize to the same resolution, then normalize. One ablation disables augmentation (resize and normalize only).
+
+\paragraph{Preprocessing for classical baselines.}
+For HOG-based pipelines we load images, convert to grayscale, and resize to the target size (64 or 128). We then compute Histogram of Oriented Gradients (HOG)~\cite{hog} features: each image is described by local gradient orientation histograms over overlapping cells and blocks (orientations=9, pixels per cell 8$\times$8, cells per block 2$\times$2, L2-Hys block normalization). HOG summarizes edge and contour structure in a fixed-length vector and does not capture texture or high-level semantics. The resulting feature vectors are standardized with \texttt{StandardScaler} (fit on train, transform on train/val/test). We report test accuracy, top-5 accuracy, and F1 (macro and weighted) for all HOG baselines in the results.
+
+%----------------------------------------------------------------------------
+\subsection{Model Architectures}
+\label{sec:models}
+%----------------------------------------------------------------------------
+
+\paragraph{ResNet-18.}
+ResNet-18~\cite{resnet} is a 18-layer residual network: initial conv layer, four stages of residual blocks (2+2+2+2 blocks) with 64, 128, 256, 512 channels, global average pooling, and a fully connected layer. We load ImageNet-pretrained weights from torchvision, freeze all parameters except the final layer, and replace the final layer with a linear layer mapping to 101 classes. Input size can be 64, 128, or 224 (spatially); the backbone adapts to the input size through the global pooling.
+
+\paragraph{EfficientNet-B0.}
+EfficientNet-B0~\cite{efficientnet} uses compound scaling (depth, width, resolution) and mobile inverted bottleneck (MBConv) blocks with squeeze-and-excitation. We use the torchvision implementation with ImageNet pretrained weights, freeze the entire backbone, and replace the classifier (a dropout and linear layer) with a new dropout and linear layer for 101 classes. Input resolution is varied in ablations (64, 128, 224).
+
+\paragraph{Vision Transformer (ViT-B/16).}
+ViT-B/16~\cite{vit} splits the image into 16$\times$16 patches, embeds them linearly, adds a learnable [CLS] token and positional embeddings, and processes the sequence with a Transformer encoder (12 layers, hidden size 768, 12 heads). The classification head is a linear layer on the [CLS] token. We use the torchvision ViT-B/16 with ImageNet weights; input is fixed at 224$\times$224. We do not ablate image size for ViT: the pretrained positional embeddings are defined for a fixed 14$\times$14 patch grid (224/16), so 64$\times$64 or 128$\times$128 would require interpolating them to a different grid size (e.g., 4$\times$4 or 8$\times$8), and at 64$\times$64 the model would see only 16 patches versus 196 at 224, which would poorly match the pretrained distribution. We therefore keep ViT at its native 224$\times$224 for a fair transfer-learning comparison. We freeze all parameters except the final head.
+
+\paragraph{HOG + SVM.}
+We extract a fixed-length HOG descriptor per image (as in Section~\ref{sec:data}). A linear SVM (\texttt{LinearSVC})~\cite{svm} is trained on the standardized features in a one-vs-rest scheme. For probability estimates and top-$k$ accuracy we wrap the SVM with \texttt{CalibratedClassifierCV} (sigmoid method, 2-fold cross-validation).
+
+\paragraph{HOG + Logistic Regression.}
+Using the same HOG features and scaling, we train a multinomial logistic regression (L2 regularization, LBFGS solver) for 101-way classification. The single multinomial model directly learns decision boundaries among all 101 classes. No calibration step is needed for probabilities.
+
+%==============================================================================
+\section{Experiments}
+\label{sec:experiments}
+%==============================================================================
+\subsection{Training Setup}
+Table~\ref{tab:training} summarizes the training configuration. For CNNs we minimize cross-entropy loss with mini-batch SGD; we use Adam (default), AdamW, or SGD with momentum as ablations. Learning rate and weight decay are fixed per run; we use a cosine annealing learning-rate schedule over the training epochs. For classical models we fit SVM and logistic regression on the full (standardized) training set after HOG extraction.
+
+\begin{table}[H]
+\centering
+\caption{Training setup: CNN and classical pipelines.}
+\label{tab:training}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Setting & CNN (ResNet-18, EfficientNet-B0, ViT-B/16) & Classical (HOG+SVM, HOG+LR) \\
+\midrule
+Loss & Cross-entropy & N/A (SVM/LR fit) \\
+Optimizer & Adam (default), AdamW, or SGD (momentum) & N/A \\
+Learning rate & Fixed per run; cosine annealing schedule & N/A \\
+Epochs & 25 & N/A (single fit on full train set) \\
+Batch size & 32 & N/A \\
+DataLoader \texttt{num\_workers} & 12 & N/A (HOG extracted offline) \\
+Weight decay & Fixed per run & L2 (SVM/LR) \\
+\midrule
+Data & Same stratified train/val/test splits & Same splits; HOG on same images \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ablation Design}
+We conduct comparisons along four dimensions:
+
+\begin{itemize}
+  \item \textbf{Image size}: compare 64$\times$64 vs.\ 128$\times$128 (and 224$\times$224 for ResNet and EfficientNet where applicable). ViT-B/16 is not ablated over resolution because its pretrained positional embeddings assume a 224$\times$224 input (see Section~\ref{sec:models}).
+  \item \textbf{Data augmentation}: train with vs.\ without augmentation (CNNs only).
+  \item \textbf{Feature extractor choice}: HOG (hand-crafted) vs.\ CNN features (ResNet-18, EfficientNet-B0, ViT-B/16 transfer learning).
+  \item \textbf{Optimizer}: SGD vs.\ Adam for CNN; we also include AdamW for completeness.
+\end{itemize}
+All CNN ablations (image size, augmentation, optimizer) use the same evaluation protocol; classical HOG+SVM and HOG+LR runs provide the feature-extractor comparison.
+
+\subsection{Evaluation}
+We report overall accuracy and top-5 accuracy on the test set, and per-class precision, recall, and F1 with macro and weighted averages. Confusion matrices are produced for all baselines (including HOG+SVM and HOG+LR at 64 and 128); per-class accuracy and F1 bar plots are produced for the CNN baselines only (see Section~\ref{sec:results}). Reproducibility is ensured by a fixed random seed and, for PyTorch, deterministic worker initialization when using multiple DataLoader workers. All results are from a single train/val/test split; we report point estimates without confidence intervals.
+
+%==============================================================================
+\section{Results}
+\label{sec:results}
+%==============================================================================
+
+\subsection{Overall Performance and Best in Model Families}
+Among the CNN models, \textbf{ViT-B/16} achieves the best overall performance (95.93\% test, 99.23\% top-5 with 224$\times$224, no augmentation, Adam). Within each family we report the best setting in Table~\ref{tab:best}: ResNet-18 reaches 92.55\%, EfficientNet-B0 94.62\%, and the classical baselines HOG+SVM and HOG+LR (at 64$\times$64 and 128$\times$128) reach 54.61\% and 66.05\% respectively. HOG+LR attains higher accuracy than HOG+SVM at both resolutions. Table~\ref{tab:ablations} gives the full ablation comparison across all model architectures (image size, augmentation, optimizer).
+
+\begin{table}[H]
+\centering
+\caption{Best test and top-5 accuracy in each model family. Best in each family in bold; best in each column overall marked with $^*$.}
+\label{tab:best}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Model family & Best setting & Test acc. (\%) & Top-5 acc. (\%) \\
+\midrule
+ResNet-18 & img224, aug, Adam & \textbf{92.55} & \textbf{98.54} \\
+EfficientNet-B0 & img224, aug, Adam & \textbf{94.62} & \textbf{98.92} \\
+ViT-B/16 & 224, no aug / aug, Adam & \textbf{95.93}$^*$ & \textbf{99.23}$^*$ \\
+HOG+SVM & img64 & \textbf{54.61} & \textbf{69.97} \\
+HOG+LR & img64 & \textbf{66.05} & \textbf{82.49} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Full Ablation Comparison (All Model Architectures)}
+Table~\ref{tab:ablations} lists all ablation runs: HOG (4 runs), ResNet-18 and EfficientNet-B0 (18 runs each: 64/128/224 $\times$ augment $\times$ Adam/AdamW/SGD), and ViT-B/16 (4 runs at 224$\times$224). Columns are model, input resolution, augmentation, optimizer, test accuracy, top-5 accuracy, and F1 macro/weighted. Best in each family is in bold; best in each column overall is marked with $^*$.
+
+\begin{table}[H]
+\centering
+\caption{Full ablation comparison: image size (64/128/224), data augmentation, feature extractor (HOG vs.\ CNN), and optimizer. Best in each family in bold; best in each column overall marked with $^*$.}
+\label{tab:ablations}
+\small
+\begin{tabular}{@{}llccccccc@{}}
+\toprule
+Model & Img size & Aug & Optimizer & Acc. (\%) & Top-5 (\%) & F1 (Macro) & F1 (Wtd) \\
+\midrule
+HOG+SVM & 64$\times$64 & False & N/A & 54.61 & 69.97 & 0.345 & 0.533 \\
+HOG+SVM & 128$\times$128 & False & N/A & 49.92 & 59.52 & 0.274 & 0.464 \\
+HOG+LR & 64$\times$64 & False & N/A & \textbf{66.05} & \textbf{82.49} & \textbf{0.489} & \textbf{0.653} \\
+HOG+LR & 128$\times$128 & False & N/A & 65.90 & 81.49 & 0.488 & 0.647 \\
+\midrule
+ResNet-18 & 64$\times$64 & True & ADAM & 60.60 & 81.34 & 0.504 & 0.590 \\
+ResNet-18 & 64$\times$64 & True & AdamW & 61.60 & 81.95 & 0.523 & 0.604 \\
+ResNet-18 & 64$\times$64 & True & SGD & 59.68 & 80.34 & 0.485 & 0.574 \\
+ResNet-18 & 64$\times$64 & False & ADAM & 66.21 & 83.72 & 0.526 & 0.653 \\
+ResNet-18 & 64$\times$64 & False & AdamW & 66.21 & 83.64 & 0.527 & 0.653 \\
+ResNet-18 & 64$\times$64 & False & SGD & 64.44 & 82.64 & 0.499 & 0.628 \\
+ResNet-18 & 128$\times$128 & True & ADAM & 85.94 & 96.31 & 0.811 & 0.857 \\
+ResNet-18 & 128$\times$128 & True & AdamW & 85.94 & 96.24 & 0.810 & 0.857 \\
+ResNet-18 & 128$\times$128 & True & SGD & 83.33 & 96.16 & 0.779 & 0.831 \\
+ResNet-18 & 128$\times$128 & False & ADAM & 85.79 & 95.62 & 0.801 & 0.856 \\
+ResNet-18 & 128$\times$128 & False & AdamW & 85.64 & 95.62 & 0.799 & 0.855 \\
+ResNet-18 & 128$\times$128 & False & SGD & 84.18 & 96.31 & 0.777 & 0.838 \\
+ResNet-18 & 224$\times$224 & True & ADAM & \textbf{92.55} & \textbf{98.54} & \textbf{0.889} & \textbf{0.924} \\
+ResNet-18 & 224$\times$224 & True & AdamW & 92.32 & 98.62 & 0.887 & 0.921 \\
+ResNet-18 & 224$\times$224 & True & SGD & 91.40 & 98.16 & 0.867 & 0.910 \\
+ResNet-18 & 224$\times$224 & False & ADAM & 92.40 & 98.46 & 0.888 & 0.921 \\
+ResNet-18 & 224$\times$224 & False & AdamW & 92.40 & 98.46 & 0.888 & 0.921 \\
+ResNet-18 & 224$\times$224 & False & SGD & 91.24 & 98.23 & 0.865 & 0.909 \\
+\midrule
+EfficientNet-B0 & 64$\times$64 & True & ADAM & 57.07 & 77.73 & 0.445 & 0.555 \\
+EfficientNet-B0 & 64$\times$64 & True & AdamW & 57.07 & 76.57 & 0.443 & 0.556 \\
+EfficientNet-B0 & 64$\times$64 & True & SGD & 54.07 & 75.65 & 0.373 & 0.493 \\
+EfficientNet-B0 & 64$\times$64 & False & ADAM & 57.68 & 77.73 & 0.418 & 0.559 \\
+EfficientNet-B0 & 64$\times$64 & False & AdamW & 57.68 & 77.65 & 0.418 & 0.559 \\
+EfficientNet-B0 & 64$\times$64 & False & SGD & 55.84 & 75.27 & 0.359 & 0.510 \\
+EfficientNet-B0 & 128$\times$128 & True & ADAM & 83.95 & 95.24 & 0.775 & 0.836 \\
+EfficientNet-B0 & 128$\times$128 & True & AdamW & 85.10 & 95.47 & 0.784 & 0.847 \\
+EfficientNet-B0 & 128$\times$128 & True & SGD & 80.11 & 93.39 & 0.696 & 0.782 \\
+EfficientNet-B0 & 128$\times$128 & False & ADAM & 84.64 & 95.08 & 0.776 & 0.841 \\
+EfficientNet-B0 & 128$\times$128 & False & AdamW & 84.79 & 95.31 & 0.779 & 0.844 \\
+EfficientNet-B0 & 128$\times$128 & False & SGD & 79.19 & 93.32 & 0.684 & 0.771 \\
+EfficientNet-B0 & 224$\times$224 & True & ADAM & \textbf{94.62} & \textbf{98.92} & \textbf{0.925} & \textbf{0.945} \\
+EfficientNet-B0 & 224$\times$224 & True & AdamW & 94.32 & 98.69 & 0.919 & 0.942 \\
+EfficientNet-B0 & 224$\times$224 & True & SGD & 89.55 & 97.70 & 0.833 & 0.884 \\
+EfficientNet-B0 & 224$\times$224 & False & ADAM & 92.86 & 98.23 & 0.900 & 0.927 \\
+EfficientNet-B0 & 224$\times$224 & False & AdamW & 93.16 & 98.39 & 0.904 & 0.931 \\
+EfficientNet-B0 & 224$\times$224 & False & SGD & 88.71 & 97.70 & 0.819 & 0.876 \\
+\midrule
+ViT-B/16 & 224$\times$224 & False & ADAM & \textbf{95.93}$^*$ & 99.23 & \textbf{0.943}$^*$ & \textbf{0.959}$^*$ \\
+ViT-B/16 & 224$\times$224 & True & ADAM & 95.55 & \textbf{99.31}$^*$ & 0.939 & 0.955 \\
+ViT-B/16 & 224$\times$224 & True & SGD & 93.78 & \textbf{99.31}$^*$ & 0.913 & 0.936 \\
+ViT-B/16 & 224$\times$224 & True & AdamW & 95.55 & \textbf{99.31}$^*$ & 0.939 & 0.955 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Baseline Confusion Matrices}
+The following figures show the confusion matrix for each baseline. Rows are true labels, columns are predicted labels; diagonal entries are correct predictions. Darker shading indicates higher counts. We include three CNN baselines and four classical baselines (HOG+SVM and HOG+LR at 64$\times$64 and 128$\times$128).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/resnet18_img128_aug1_adam_confusion_matrix.png}
+\caption{Confusion matrix for the ResNet-18 baseline (input size 128$\times$128, with augmentation, Adam optimizer). The model achieves 85.94\% overall test accuracy. Strong diagonal values indicate good per-class recognition; off-diagonal blocks highlight confusions between visually or semantically similar categories (e.g., animal or object subfamilies).}
+\label{fig:cm-resnet}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/efficientnet_b0_img128_aug1_adam_confusion_matrix.png}
+\caption{Confusion matrix for the EfficientNet-B0 baseline (128$\times$128, augmentation, Adam). Test accuracy is 83.95\%. EfficientNet's compound scaling yields performance comparable to ResNet-18 at the same resolution; confusion patterns reflect shared challenges across both architectures on fine-grained or low-sample classes.}
+\label{fig:cm-efficientnet}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/vit_b16_img224_aug1_adam_confusion_matrix.png}
+\caption{Confusion matrix for the ViT-B/16 baseline (224$\times$224, augmentation, Adam). ViT achieves the highest baseline test accuracy (95.55\%) among the three CNNs. The patch-based transformer captures global structure well; remaining errors are concentrated in a few difficult or rare classes.}
+\label{fig:cm-vit}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/hog_svm_img64_confusion_matrix.png}
+\caption{Confusion matrix for HOG+SVM at 64$\times$64. Test accuracy is 54.61\%. HOG+SVM at 128$\times$128 attains 49.92\%; the higher resolution does not improve SVM in this setup.}
+\label{fig:cm-hog-svm64}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/hog_svm_img128_confusion_matrix.png}
+\caption{Confusion matrix for HOG+SVM at 128$\times$128. Test accuracy is 49.92\%. The larger HOG descriptor at 128$\times$128 does not yield better classification than 64$\times$64 for the linear SVM.}
+\label{fig:cm-hog-svm128}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/hog_lr_img64_confusion_matrix.png}
+\caption{Confusion matrix for HOG+LR at 64$\times$64. Test accuracy is 66.05\%. Logistic regression on the same HOG features outperforms the linear SVM at both 64 and 128 resolution.}
+\label{fig:cm-hog-lr64}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{outputs/figures/hog_lr_img128_confusion_matrix.png}
+\caption{Confusion matrix for HOG+LR at 128$\times$128. Test accuracy is 65.90\%; HOG+LR at 64$\times$64 attains slightly higher (66.05\%).}
+\label{fig:cm-hog-lr128}
+\end{figure}
+
+\subsection{Baseline Per-Class Accuracy}
+The following figures show per-class (per-category) accuracy for each CNN baseline: the fraction of test samples correctly classified in that class. Classes are sorted along the horizontal axis; bars indicate how well each of the 101 categories is recognized. We do not include a separate per-class accuracy figure for HOG+SVM or HOG+LR: the classical pipelines are evaluated with the same confusion matrix and classification report (precision, recall, F1 per class). Per-class accuracy and F1 for the HOG baselines can be read from the confusion matrix (diagonal entry divided by row sum for each class) or from the classification report; we do not plot the same bar-chart style as for the CNNs.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{outputs/figures/resnet18_img128_aug1_adam_per_class_accuracy.png}
+\caption{Per-class accuracy for the ResNet-18 baseline. Classes with few test samples or high visual variability often show lower bars; well-represented and distinctive categories (e.g., faces, vehicles) tend to reach high per-class accuracy. This breakdown helps identify which categories benefit most from transfer learning and where the model underperforms.}
+\label{fig:perclass-resnet}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{outputs/figures/efficientnet_b0_img128_aug1_adam_per_class_accuracy.png}
+\caption{Per-class accuracy for the EfficientNet-B0 baseline. The pattern is similar to ResNet-18 at 128$\times$128, with shared strengths and weaknesses across classes. Comparing this figure with Figure~\ref{fig:perclass-resnet} and Figure~\ref{fig:perclass-vit} illustrates how architecture and resolution affect fine-grained performance.}
+\label{fig:perclass-efficientnet}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{outputs/figures/vit_b16_img224_aug1_adam_per_class_accuracy.png}
+\caption{Per-class accuracy for the ViT-B/16 baseline. ViT at 224$\times$224 generally attains higher bars across more classes than the two CNN baselines at 128$\times$128, consistent with its higher overall test accuracy. Remaining low-accuracy classes are candidates for targeted data augmentation or class-balanced loss in future work.}
+\label{fig:perclass-vit}
+\end{figure}
+
+\paragraph{Summary: confusion matrices and per-class accuracy.}
+The confusion matrices (Figures~\ref{fig:cm-resnet}--\ref{fig:cm-hog-lr128}) show a clear gradient from CNN baselines to the classical baselines: ResNet-18, EfficientNet-B0, and ViT-B/16 exhibit strong diagonal dominance with limited off-diagonal mass, whereas HOG+SVM and HOG+LR have noisier matrices with more diffuse confusions; HOG+LR yields stronger diagonal dominance than HOG+SVM at both resolutions. Within the CNNs, ViT at 224$\times$224 concentrates errors in fewer classes and yields the cleanest diagonal. The per-class accuracy plots (Figures~\ref{fig:perclass-resnet}--\ref{fig:perclass-vit}) align with this: all three CNN baselines perform well on many categories, with dips typically in rare or visually ambiguous classes (e.g., fine-grained animals or objects with high intra-class variation). ViT raises the floor across classes compared with ResNet-18 and EfficientNet-B0 at 128$\times$128. Taken together, the confusion matrices and per-class accuracy indicate that (i) learned CNN features yield more separable class representations than HOG, (ii) higher resolution (224) improves both overall accuracy and per-class consistency, and (iii) the remaining errors are concentrated in a small set of difficult categories rather than spread uniformly.
+
+
+%==============================================================================
+\section{Discussion}
+\label{sec:discussion}
+%==============================================================================
+\subsection{Observations and Ablation Studies}
+We summarize findings along the four comparison dimensions, then explain likely causes and an overall insight.
+
+\paragraph{Image size: 64$\times$64 vs.\ 128$\times$128 (and 224).}
+For ResNet-18 and EfficientNet-B0, test accuracy drops sharply at 64$\times$64 (around 60--66\% and 54--58\% depending on augment/optimizer) compared with 128 (84--86\% and 79--85\%) and 224 (91--92.5\% and 88--94.6\%). Larger resolution consistently helps; ViT-B/16 (fixed at 224) reaches the highest accuracy (95.93\% without augmentation, 95.55\% with). The 64 vs.\ 128 comparison clearly favors 128 for both architectures.
+
+\paragraph{Data augmentation: with vs.\ without.}
+Training without augmentation yields similar or slightly better test accuracy at 128 for ResNet (85.79\% no aug vs.\ 85.94\% with aug) and EfficientNet (84.64--84.79\% no aug vs.\ 83.95--85.1\% with aug); for ViT at 224, no augmentation slightly outperforms (95.93\% vs.\ 95.55\%). Overall, the effect of augmentation is modest in this setting, suggesting limited overfitting when augmentation is disabled.
+
+\paragraph{Feature extractor choice: HOG vs.\ CNN.}
+The classical baselines HOG+SVM and HOG+LR were evaluated at 64$\times$64 and 128$\times$128. HOG+SVM reaches 54.61\% test (64) and 49.92\% (128); HOG+LR reaches 66.05\% (64) and 65.90\% (128) test accuracy, with top-5 about 82\% in both cases. Thus HOG+LR substantially outperforms HOG+SVM on this dataset. All CNN baselines (ResNet-18, EfficientNet-B0, ViT-B/16) substantially outperform both classical methods. Learned CNN features clearly outperform hand-crafted HOG on Caltech-101 under our setup.
+
+\paragraph{Optimizer: SGD vs.\ Adam (and AdamW) for CNN.}
+SGD underperforms Adam and AdamW: e.g., ResNet-18 at 128 (83.33\% SGD vs.\ 85.94\% Adam/AdamW); EfficientNet-B0 at 128 (80.11\% SGD vs.\ 85.1\% AdamW). At 224, ResNet-18 reaches 92.55\% (Adam) vs.\ 91.4\% (SGD); EfficientNet-B0 reaches 94.62\% (Adam) vs.\ 89.55\% (SGD). Adam and AdamW are close; Adam is the default and performs well across families.
+
+\subsection{Cause Analysis: Why Do These Factors Affect Results?}
+Beyond reporting numbers, we interpret \emph{why} image size, augmentation, optimizer, and feature extractor lead to the observed differences.
+
+\subsection{Analysis of Performance Drivers}
+The experimental results demonstrate a clear hierarchy of factors influencing classification accuracy. The most substantial performance leap originates from the transition from hand-crafted HOG features to learned CNN representations. While HOG+LR provides a respectable baseline (66.05\% at 64$\times$64), it appears to reach a performance ceiling regardless of resolution. This suggests that the fixed geometric nature of HOG descriptors lacks the semantic depth required to navigate the 101-way decision boundaries of Caltech-101. In contrast, the pretrained CNN backbones, even with frozen weights, provide a hierarchical feature space that significantly improves class separability.
+
+\subsection{The Role of Input Resolution and Feature Alignment}
+Input resolution emerged as a critical bottleneck for convolutional architectures. The sharp decline in accuracy at 64$\times$64 (e.g., 60.60\% for ResNet-18) compared to 224$\times$224 (92.55\%) indicates that aggressive downsampling discards the fine-grained discriminative textures (such as the specific contours of animal species) that ImageNet-pretrained filters are tuned to detect. Furthermore, because models like ResNet and EfficientNet were originally optimized for 224-pixel inputs, feeding them smaller images likely introduces a distribution shift that hinders the performance of the pre-extracted features. ViT-B/16's superior performance (95.93\%) further underscores this, as its patch-based attention mechanism effectively captures global context that global average pooling in CNNs might compress too aggressively at lower resolutions.
+
+\subsection{Optimization and Regularization Nuances}
+Contrary to some common assumptions in deep learning, data augmentation yielded only marginal gains in this head-only transfer learning setup. In several instances, such as with ViT-B/16, training without augmentation slightly outperformed the augmented runs. This phenomenon can be attributed to the fact that we are only training a linear classification head; since the backbone remains frozen, the risk of overfitting is inherently limited, and the noise introduced by augmentation may occasionally interfere with the stable features already learned during pretraining. 
+
+Regarding optimization, the consistent advantage of Adam/AdamW over SGD (e.g., a 5\% gap for EfficientNet-B0 at 224) suggests that adaptive learning rates are better suited for fine-tuning a single layer. SGD's reliance on a global learning rate appears less efficient at navigating the loss surface of the classification head when the underlying feature extractor is not co-adapting.
+
+\subsection{Limitations and Future Trajectories}
+While the results are robust, several constraints merit acknowledgment. The use of a single stratified split provides point estimates but does not account for the variance inherent in class-imbalanced datasets like Caltech-101. Additionally, the study is limited to linear probing (frozen backbones). A natural extension would be a comparative study of full fine-tuning versus head-only training to determine if the 4\% error rate remaining in ViT can be closed by adapting the lower-level filters to Caltech's specific domain.
+
+%==============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%==============================================================================
+This study evaluated the interplay between architectural design, input resolution, and optimization strategies for image classification. Our findings confirm that representation quality, driven by pretrained transformers and deep residual networks, dominates performance. Code, experiment logs, figures, and the report source are available at \url{https://github.com/chenxige0509/Caltech101-Mini-Project}.
+
+\clearpage
+%==============================================================================
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+
+\bibitem{caltech101}
+F.-F. Li, M. Andreeto, M. Ranzato, and P. Perona.
+\newblock Caltech-101.
+\newblock Technical Report, Caltech, 2022. \url{https://data.caltech.edu/records/mzrjq-6wc02}
+
+\bibitem{resnet}
+K. He, X. Zhang, S. Ren, and J. Sun.
+\newblock Deep residual learning for image recognition.
+\newblock In \textit{CVPR}, 2016.
+
+\bibitem{efficientnet}
+M. Tan and Q. V. Le.
+\newblock EfficientNet: Rethinking model scaling for convolutional neural networks.
+\newblock In \textit{ICML}, 2019.
+
+\bibitem{vit}
+A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. Dehghani, M. Minderer, G. Heigold, S. Gelly, J. Uszkoreit, and N. Houlsby.
+\newblock An image is worth 16x16 words: Transformers for image recognition at scale.
+\newblock In \textit{ICLR}, 2021.
+
+\bibitem{hog}
+N. Dalal and B. Triggs.
+\newblock Histograms of oriented gradients for human detection.
+\newblock In \textit{CVPR}, 2005.
+
+\bibitem{imagenet}
+O. Russakovsky, J. Deng, H. Su, J. Krause, S. Satheesh, S. Ma, Z. Huang, A. Karpathy, A. Khosla, M. Bernstein, A. C. Berg, and L. Fei-Fei.
+\newblock ImageNet large scale visual recognition challenge.
+\newblock \textit{IJCV}, 115(3):211--252, 2015.
+
+\bibitem{adam}
+D. P. Kingma and J. Ba.
+\newblock Adam: A method for stochastic optimization.
+\newblock In \textit{ICLR}, 2015.
+
+\bibitem{adamw}
+I. Loshchilov and F. Hutter.
+\newblock Decoupled weight decay regularization.
+\newblock In \textit{ICLR}, 2019.
+
+\bibitem{transfer}
+J. Yosinski, J. Clune, Y. Bengio, and H. Lipson.
+\newblock How transferable are features in deep neural networks?
+\newblock In \textit{NeurIPS}, 2014.
+
+\bibitem{augsurvey}
+C. Shorten and T. M. Khoshgoftaar.
+\newblock A survey on image data augmentation for deep learning.
+\newblock \textit{J. Big Data}, 6(1):60, 2019.
+
+\bibitem{svm}
+C. Cortes and V. Vapnik.
+\newblock Support-vector networks.
+\newblock \textit{Machine Learning}, 20(3):273--297, 1995.
+
+\bibitem{pytorch}
+A. Paszke, S. Gross, F. Massa, A. Lerer, J. Bradbury, G. Chanan, T. Killeen, Z. Lin, N. Gimelshein, L. Antiga, A. Desmaison, A. Kopf, E. Yang, Z. DeVito, M. Raison, A. Tejani, S. Chilamkurthy, B. Steiner, L. Fang, J. Bai, and S. Chintala.
+\newblock PyTorch: An imperative style, high-performance deep learning library.
+\newblock In \textit{NeurIPS}, 2019.
+
+\bibitem{torchvision}
+S. Marcel and Y. Rodriguez.
+\newblock Torchvision: A library for computer vision in PyTorch.
+\newblock \url{https://github.com/pytorch/vision}, 2017.
+
+\bibitem{scikit}
+F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J. Vanderplas, A. Passos, D. Cournapeau, M. Brucher, M. Perrot, and E. Duchesnay.
+\newblock Scikit-learn: Machine learning in Python.
+\newblock \textit{J. Mach. Learn. Res.}, 12:2825--2830, 2011.
+
+\end{thebibliography}
+
+\end{document}
