@@ -69,7 +69,7 @@ def train(
     augment: bool = True,
     optimizer_name: str = "adam",
     num_epochs: int = 25,
-    num_workers: int = 0,
+    num_workers: int = 12,
     batch_size: int = 32,
 ) -> None:
     set_seed(SEED)

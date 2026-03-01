@@ -313,7 +313,7 @@ def run_all(epochs: int = 25, num_workers: int = 0, quick: bool = False):
 def main():
     parser = argparse.ArgumentParser(description="Run all Caltech-101 experiments")
     parser.add_argument("--epochs", type=int, default=25)
-    parser.add_argument("--num_workers", type=int, default=0)
+    parser.add_argument("--num_workers", type=int, default=12)
     parser.add_argument("--quick", action="store_true",
                         help="Only run baseline (no ablations) for a quick smoke test")
     args = parser.parse_args()
