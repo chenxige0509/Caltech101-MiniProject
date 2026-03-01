@@ -1,0 +1,10 @@
+{
+  "model": "hog_lr",
+  "image_size": 128,
+  "classifier": "lr",
+  "test_accuracy": 0.6589861751152074,
+  "top5_accuracy": 0.814900153609831,
+  "val_accuracy": 0.6766513056835638,
+  "f1_macro": 0.4884584041536937,
+  "f1_weighted": 0.6474466368275158
+}

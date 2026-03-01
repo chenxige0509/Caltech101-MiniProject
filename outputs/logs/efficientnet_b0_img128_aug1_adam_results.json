@@ -1,0 +1,8 @@
+{
+  "model": "efficientnet_b0",
+  "image_size": 128,
+  "augment": true,
+  "optimizer_name": "adam",
+  "test_accuracy": 0.7741935483870968,
+  "top5_accuracy": 0.9170506912442397
+}

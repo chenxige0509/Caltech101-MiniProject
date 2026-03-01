@@ -1,0 +1,725 @@
+{
+  "model": "efficientnet_b0",
+  "image_size": 64,
+  "augment": true,
+  "optimizer": "adamw",
+  "test_accuracy": 0.5706605222734255,
+  "top5_accuracy": 0.7657450076804916,
+  "precision_macro": 0.4665393424491853,
+  "precision_weighted": 0.567209873098326,
+  "recall_macro": 0.44868626700386494,
+  "recall_weighted": 0.5706605222734255,
+  "f1_macro": 0.44267935649195755,
+  "f1_weighted": 0.5560978732776826,
+  "per_class_accuracy": {
+    "Faces": 0.8333333333333334,
+    "Faces_easy": 0.9090909090909091,
+    "Leopards": 0.8333333333333334,
+    "Motorbikes": 0.9333333333333333,
+    "accordion": 0.5,
+    "airplanes": 0.55,
+    "anchor": 0.16666666666666666,
+    "ant": 0.3333333333333333,
+    "barrel": 0.7142857142857143,
+    "bass": 0.125,
+    "beaver": 0.14285714285714285,
+    "binocular": 0.6,
+    "bonsai": 0.5789473684210527,
+    "brain": 0.6,
+    "brontosaurus": 0.16666666666666666,
+    "buddha": 0.5384615384615384,
+    "butterfly": 0.5,
+    "camera": 0.14285714285714285,
+    "cannon": 0.16666666666666666,
+    "car_side": 0.8947368421052632,
+    "ceiling_fan": 0.2857142857142857,
+    "cellphone": 0.8888888888888888,
+    "chair": 0.3,
+    "chandelier": 0.5,
+    "cougar_body": 0.0,
+    "cougar_face": 0.7,
+    "crab": 0.18181818181818182,
+    "crayfish": 0.1,
+    "crocodile": 0.125,
+    "crocodile_head": 0.0,
+    "cup": 0.375,
+    "dalmatian": 0.7,
+    "dollar_bill": 0.625,
+    "dolphin": 0.3,
+    "dragonfly": 0.4,
+    "electric_guitar": 0.09090909090909091,
+    "elephant": 0.6,
+    "emu": 0.25,
+    "euphonium": 0.6666666666666666,
+    "ewer": 0.5384615384615384,
+    "ferry": 0.6,
+    "flamingo": 0.4,
+    "flamingo_head": 0.5714285714285714,
+    "garfield": 1.0,
+    "gerenuk": 0.2,
+    "gramophone": 0.0,
+    "grand_piano": 0.5333333333333333,
+    "hawksbill": 0.26666666666666666,
+    "headphone": 0.2857142857142857,
+    "hedgehog": 0.25,
+    "helicopter": 0.3076923076923077,
+    "ibis": 0.25,
+    "inline_skate": 0.2,
+    "joshua_tree": 0.7777777777777778,
+    "kangaroo": 0.3076923076923077,
+    "ketch": 0.8235294117647058,
+    "lamp": 0.3333333333333333,
+    "laptop": 0.8333333333333334,
+    "llama": 0.45454545454545453,
+    "lobster": 0.16666666666666666,
+    "lotus": 0.3,
+    "mandolin": 0.0,
+    "mayfly": 0.16666666666666666,
+    "menorah": 0.7692307692307693,
+    "metronome": 0.6,
+    "minaret": 0.6363636363636364,
+    "nautilus": 0.6666666666666666,
+    "octopus": 0.4,
+    "okapi": 0.16666666666666666,
+    "pagoda": 0.7142857142857143,
+    "panda": 0.16666666666666666,
+    "pigeon": 0.3333333333333333,
+    "pizza": 0.375,
+    "platypus": 0.0,
+    "pyramid": 0.625,
+    "revolver": 0.46153846153846156,
+    "rhino": 0.4444444444444444,
+    "rooster": 0.375,
+    "saxophone": 0.3333333333333333,
+    "schooner": 0.5555555555555556,
+    "scissors": 0.5,
+    "scorpion": 0.23076923076923078,
+    "sea_horse": 0.25,
+    "snoopy": 0.8,
+    "soccer_ball": 0.8888888888888888,
+    "stapler": 0.42857142857142855,
+    "starfish": 0.46153846153846156,
+    "stegosaurus": 0.2222222222222222,
+    "stop_sign": 0.9,
+    "strawberry": 0.4,
+    "sunflower": 0.9230769230769231,
+    "tick": 0.5714285714285714,
+    "trilobite": 1.0,
+    "umbrella": 0.45454545454545453,
+    "watch": 0.7777777777777778,
+    "water_lilly": 0.3333333333333333,
+    "wheelchair": 0.3333333333333333,
+    "wild_cat": 0.0,
+    "windsor_chair": 0.6666666666666666,
+    "wrench": 0.0,
+    "yin_yang": 0.6666666666666666
+  },
+  "per_class": {
+    "Faces": {
+      "precision": 0.7534246575342466,
+      "recall": 0.8333333333333334,
+      "f1": 0.7913669064748201,
+      "support": 66
+    },
+    "Faces_easy": {
+      "precision": 0.8,
+      "recall": 0.9090909090909091,
+      "f1": 0.851063829787234,
+      "support": 66
+    },
+    "Leopards": {
+      "precision": 0.6578947368421053,
+      "recall": 0.8333333333333334,
+      "f1": 0.7352941176470589,
+      "support": 30
+    },
+    "Motorbikes": {
+      "precision": 0.7567567567567568,
+      "recall": 0.9333333333333333,
+      "f1": 0.835820895522388,
+      "support": 120
+    },
+    "accordion": {
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "support": 8
+    },
+    "airplanes": {
+      "precision": 0.7951807228915663,
+      "recall": 0.55,
+      "f1": 0.6502463054187192,
+      "support": 120
+    },
+    "anchor": {
+      "precision": 0.5,
+      "recall": 0.16666666666666666,
+      "f1": 0.25,
+      "support": 6
+    },
+    "ant": {
+      "precision": 0.5,
+      "recall": 0.3333333333333333,
+      "f1": 0.4,
+      "support": 6
+    },
+    "barrel": {
+      "precision": 0.625,
+      "recall": 0.7142857142857143,
+      "f1": 0.6666666666666666,
+      "support": 7
+    },
+    "bass": {
+      "precision": 0.3333333333333333,
+      "recall": 0.125,
+      "f1": 0.18181818181818182,
+      "support": 8
+    },
+    "beaver": {
+      "precision": 0.25,
+      "recall": 0.14285714285714285,
+      "f1": 0.18181818181818182,
+      "support": 7
+    },
+    "binocular": {
+      "precision": 0.3,
+      "recall": 0.6,
+      "f1": 0.4,
+      "support": 5
+    },
+    "bonsai": {
+      "precision": 0.4782608695652174,
+      "recall": 0.5789473684210527,
+      "f1": 0.5238095238095238,
+      "support": 19
+    },
+    "brain": {
+      "precision": 0.5,
+      "recall": 0.6,
+      "f1": 0.5454545454545454,
+      "support": 15
+    },
+    "brontosaurus": {
+      "precision": 0.25,
+      "recall": 0.16666666666666666,
+      "f1": 0.2,
+      "support": 6
+    },
+    "buddha": {
+      "precision": 0.3181818181818182,
+      "recall": 0.5384615384615384,
+      "f1": 0.4,
+      "support": 13
+    },
+    "butterfly": {
+      "precision": 0.4375,
+      "recall": 0.5,
+      "f1": 0.4666666666666667,
+      "support": 14
+    },
+    "camera": {
+      "precision": 0.2,
+      "recall": 0.14285714285714285,
+      "f1": 0.16666666666666666,
+      "support": 7
+    },
+    "cannon": {
+      "precision": 0.25,
+      "recall": 0.16666666666666666,
+      "f1": 0.2,
+      "support": 6
+    },
+    "car_side": {
+      "precision": 0.85,
+      "recall": 0.8947368421052632,
+      "f1": 0.8717948717948718,
+      "support": 19
+    },
+    "ceiling_fan": {
+      "precision": 0.25,
+      "recall": 0.2857142857142857,
+      "f1": 0.26666666666666666,
+      "support": 7
+    },
+    "cellphone": {
+      "precision": 0.5714285714285714,
+      "recall": 0.8888888888888888,
+      "f1": 0.6956521739130435,
+      "support": 9
+    },
+    "chair": {
+      "precision": 0.3,
+      "recall": 0.3,
+      "f1": 0.3,
+      "support": 10
+    },
+    "chandelier": {
+      "precision": 0.4444444444444444,
+      "recall": 0.5,
+      "f1": 0.47058823529411764,
+      "support": 16
+    },
+    "cougar_body": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 7
+    },
+    "cougar_face": {
+      "precision": 0.5384615384615384,
+      "recall": 0.7,
+      "f1": 0.6086956521739131,
+      "support": 10
+    },
+    "crab": {
+      "precision": 0.4,
+      "recall": 0.18181818181818182,
+      "f1": 0.25,
+      "support": 11
+    },
+    "crayfish": {
+      "precision": 0.1111111111111111,
+      "recall": 0.1,
+      "f1": 0.10526315789473684,
+      "support": 10
+    },
+    "crocodile": {
+      "precision": 0.2,
+      "recall": 0.125,
+      "f1": 0.15384615384615385,
+      "support": 8
+    },
+    "crocodile_head": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 7
+    },
+    "cup": {
+      "precision": 0.75,
+      "recall": 0.375,
+      "f1": 0.5,
+      "support": 8
+    },
+    "dalmatian": {
+      "precision": 0.6363636363636364,
+      "recall": 0.7,
+      "f1": 0.6666666666666666,
+      "support": 10
+    },
+    "dollar_bill": {
+      "precision": 0.7142857142857143,
+      "recall": 0.625,
+      "f1": 0.6666666666666666,
+      "support": 8
+    },
+    "dolphin": {
+      "precision": 0.375,
+      "recall": 0.3,
+      "f1": 0.3333333333333333,
+      "support": 10
+    },
+    "dragonfly": {
+      "precision": 0.26666666666666666,
+      "recall": 0.4,
+      "f1": 0.32,
+      "support": 10
+    },
+    "electric_guitar": {
+      "precision": 0.1111111111111111,
+      "recall": 0.09090909090909091,
+      "f1": 0.1,
+      "support": 11
+    },
+    "elephant": {
+      "precision": 0.6,
+      "recall": 0.6,
+      "f1": 0.6,
+      "support": 10
+    },
+    "emu": {
+      "precision": 0.4,
+      "recall": 0.25,
+      "f1": 0.3076923076923077,
+      "support": 8
+    },
+    "euphonium": {
+      "precision": 0.8571428571428571,
+      "recall": 0.6666666666666666,
+      "f1": 0.75,
+      "support": 9
+    },
+    "ewer": {
+      "precision": 0.5384615384615384,
+      "recall": 0.5384615384615384,
+      "f1": 0.5384615384615384,
+      "support": 13
+    },
+    "ferry": {
+      "precision": 0.42857142857142855,
+      "recall": 0.6,
+      "f1": 0.5,
+      "support": 10
+    },
+    "flamingo": {
+      "precision": 0.5,
+      "recall": 0.4,
+      "f1": 0.4444444444444444,
+      "support": 10
+    },
+    "flamingo_head": {
+      "precision": 0.5714285714285714,
+      "recall": 0.5714285714285714,
+      "f1": 0.5714285714285714,
+      "support": 7
+    },
+    "garfield": {
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666,
+      "support": 5
+    },
+    "gerenuk": {
+      "precision": 0.25,
+      "recall": 0.2,
+      "f1": 0.2222222222222222,
+      "support": 5
+    },
+    "gramophone": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 8
+    },
+    "grand_piano": {
+      "precision": 0.5,
+      "recall": 0.5333333333333333,
+      "f1": 0.5161290322580645,
+      "support": 15
+    },
+    "hawksbill": {
+      "precision": 0.2222222222222222,
+      "recall": 0.26666666666666666,
+      "f1": 0.24242424242424243,
+      "support": 15
+    },
+    "headphone": {
+      "precision": 1.0,
+      "recall": 0.2857142857142857,
+      "f1": 0.4444444444444444,
+      "support": 7
+    },
+    "hedgehog": {
+      "precision": 0.3333333333333333,
+      "recall": 0.25,
+      "f1": 0.2857142857142857,
+      "support": 8
+    },
+    "helicopter": {
+      "precision": 0.3333333333333333,
+      "recall": 0.3076923076923077,
+      "f1": 0.32,
+      "support": 13
+    },
+    "ibis": {
+      "precision": 0.3,
+      "recall": 0.25,
+      "f1": 0.2727272727272727,
+      "support": 12
+    },
+    "inline_skate": {
+      "precision": 0.2,
+      "recall": 0.2,
+      "f1": 0.2,
+      "support": 5
+    },
+    "joshua_tree": {
+      "precision": 0.6363636363636364,
+      "recall": 0.7777777777777778,
+      "f1": 0.7,
+      "support": 9
+    },
+    "kangaroo": {
+      "precision": 0.3333333333333333,
+      "recall": 0.3076923076923077,
+      "f1": 0.32,
+      "support": 13
+    },
+    "ketch": {
+      "precision": 0.5833333333333334,
+      "recall": 0.8235294117647058,
+      "f1": 0.6829268292682927,
+      "support": 17
+    },
+    "lamp": {
+      "precision": 0.2727272727272727,
+      "recall": 0.3333333333333333,
+      "f1": 0.3,
+      "support": 9
+    },
+    "laptop": {
+      "precision": 0.5263157894736842,
+      "recall": 0.8333333333333334,
+      "f1": 0.6451612903225806,
+      "support": 12
+    },
+    "llama": {
+      "precision": 1.0,
+      "recall": 0.45454545454545453,
+      "f1": 0.625,
+      "support": 11
+    },
+    "lobster": {
+      "precision": 0.25,
+      "recall": 0.16666666666666666,
+      "f1": 0.2,
+      "support": 6
+    },
+    "lotus": {
+      "precision": 0.3333333333333333,
+      "recall": 0.3,
+      "f1": 0.3157894736842105,
+      "support": 10
+    },
+    "mandolin": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 6
+    },
+    "mayfly": {
+      "precision": 0.25,
+      "recall": 0.16666666666666666,
+      "f1": 0.2,
+      "support": 6
+    },
+    "menorah": {
+      "precision": 0.7692307692307693,
+      "recall": 0.7692307692307693,
+      "f1": 0.7692307692307693,
+      "support": 13
+    },
+    "metronome": {
+      "precision": 0.42857142857142855,
+      "recall": 0.6,
+      "f1": 0.5,
+      "support": 5
+    },
+    "minaret": {
+      "precision": 0.5833333333333334,
+      "recall": 0.6363636363636364,
+      "f1": 0.6086956521739131,
+      "support": 11
+    },
+    "nautilus": {
+      "precision": 0.8571428571428571,
+      "recall": 0.6666666666666666,
+      "f1": 0.75,
+      "support": 9
+    },
+    "octopus": {
+      "precision": 0.4,
+      "recall": 0.4,
+      "f1": 0.4,
+      "support": 5
+    },
+    "okapi": {
+      "precision": 0.5,
+      "recall": 0.16666666666666666,
+      "f1": 0.25,
+      "support": 6
+    },
+    "pagoda": {
+      "precision": 0.8333333333333334,
+      "recall": 0.7142857142857143,
+      "f1": 0.7692307692307693,
+      "support": 7
+    },
+    "panda": {
+      "precision": 0.3333333333333333,
+      "recall": 0.16666666666666666,
+      "f1": 0.2222222222222222,
+      "support": 6
+    },
+    "pigeon": {
+      "precision": 0.2222222222222222,
+      "recall": 0.3333333333333333,
+      "f1": 0.26666666666666666,
+      "support": 6
+    },
+    "pizza": {
+      "precision": 0.5,
+      "recall": 0.375,
+      "f1": 0.42857142857142855,
+      "support": 8
+    },
+    "platypus": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 5
+    },
+    "pyramid": {
+      "precision": 0.625,
+      "recall": 0.625,
+      "f1": 0.625,
+      "support": 8
+    },
+    "revolver": {
+      "precision": 0.5,
+      "recall": 0.46153846153846156,
+      "f1": 0.48,
+      "support": 13
+    },
+    "rhino": {
+      "precision": 0.4,
+      "recall": 0.4444444444444444,
+      "f1": 0.42105263157894735,
+      "support": 9
+    },
+    "rooster": {
+      "precision": 0.5,
+      "recall": 0.375,
+      "f1": 0.42857142857142855,
+      "support": 8
+    },
+    "saxophone": {
+      "precision": 0.3333333333333333,
+      "recall": 0.3333333333333333,
+      "f1": 0.3333333333333333,
+      "support": 6
+    },
+    "schooner": {
+      "precision": 0.35714285714285715,
+      "recall": 0.5555555555555556,
+      "f1": 0.43478260869565216,
+      "support": 9
+    },
+    "scissors": {
+      "precision": 0.375,
+      "recall": 0.5,
+      "f1": 0.42857142857142855,
+      "support": 6
+    },
+    "scorpion": {
+      "precision": 0.23076923076923078,
+      "recall": 0.23076923076923078,
+      "f1": 0.23076923076923078,
+      "support": 13
+    },
+    "sea_horse": {
+      "precision": 0.25,
+      "recall": 0.25,
+      "f1": 0.25,
+      "support": 8
+    },
+    "snoopy": {
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.8888888888888888,
+      "support": 5
+    },
+    "soccer_ball": {
+      "precision": 0.8,
+      "recall": 0.8888888888888888,
+      "f1": 0.8421052631578947,
+      "support": 9
+    },
+    "stapler": {
+      "precision": 0.42857142857142855,
+      "recall": 0.42857142857142855,
+      "f1": 0.42857142857142855,
+      "support": 7
+    },
+    "starfish": {
+      "precision": 0.5454545454545454,
+      "recall": 0.46153846153846156,
+      "f1": 0.5,
+      "support": 13
+    },
+    "stegosaurus": {
+      "precision": 0.4,
+      "recall": 0.2222222222222222,
+      "f1": 0.2857142857142857,
+      "support": 9
+    },
+    "stop_sign": {
+      "precision": 0.8181818181818182,
+      "recall": 0.9,
+      "f1": 0.8571428571428571,
+      "support": 10
+    },
+    "strawberry": {
+      "precision": 0.5,
+      "recall": 0.4,
+      "f1": 0.4444444444444444,
+      "support": 5
+    },
+    "sunflower": {
+      "precision": 0.7058823529411765,
+      "recall": 0.9230769230769231,
+      "f1": 0.8,
+      "support": 13
+    },
+    "tick": {
+      "precision": 0.6666666666666666,
+      "recall": 0.5714285714285714,
+      "f1": 0.6153846153846154,
+      "support": 7
+    },
+    "trilobite": {
+      "precision": 0.6842105263157895,
+      "recall": 1.0,
+      "f1": 0.8125,
+      "support": 13
+    },
+    "umbrella": {
+      "precision": 0.8333333333333334,
+      "recall": 0.45454545454545453,
+      "f1": 0.5882352941176471,
+      "support": 11
+    },
+    "watch": {
+      "precision": 0.6666666666666666,
+      "recall": 0.7777777777777778,
+      "f1": 0.717948717948718,
+      "support": 36
+    },
+    "water_lilly": {
+      "precision": 0.3333333333333333,
+      "recall": 0.3333333333333333,
+      "f1": 0.3333333333333333,
+      "support": 6
+    },
+    "wheelchair": {
+      "precision": 0.5,
+      "recall": 0.3333333333333333,
+      "f1": 0.4,
+      "support": 9
+    },
+    "wild_cat": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 5
+    },
+    "windsor_chair": {
+      "precision": 0.5454545454545454,
+      "recall": 0.6666666666666666,
+      "f1": 0.6,
+      "support": 9
+    },
+    "wrench": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 6
+    },
+    "yin_yang": {
+      "precision": 0.75,
+      "recall": 0.6666666666666666,
+      "f1": 0.7058823529411765,
+      "support": 9
+    }
+  }
+}

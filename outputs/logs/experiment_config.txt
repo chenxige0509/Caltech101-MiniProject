@@ -1,0 +1,50 @@
+# ======================================================
+#  Experiment Configuration — Caltech-101 Classification
+#  Project: AI in Medicine — Image Classification
+# ======================================================
+
+[data]
+dataset_path          = caltech-101/
+num_classes           = TBD          # will be determined after data loading
+
+[split]
+train_ratio           = 0.70
+val_ratio             = 0.15
+test_ratio            = 0.15
+stratified            = True
+
+[reproducibility]
+seed                  = 42
+
+[training_defaults]
+batch_size            = 32
+learning_rate         = 1e-3
+num_epochs            = 25
+optimizer             = Adam
+scheduler             = CosineAnnealingLR
+weight_decay          = 1e-4
+
+[image]
+default_image_size    = 128          # ablation: 64 vs 128
+normalization         = ImageNet     # mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225]
+
+[models]
+model_1               = ResNet-18   (pretrained, fine-tuned)
+model_2               = EfficientNet-B0 (pretrained, fine-tuned)
+model_3               = ViT-B/16    (pretrained, fine-tuned)
+model_4               = SVM + HOG   (classical baseline)
+
+[ablation_studies]
+ablation_1            = Image size: 64x64 vs 128x128
+ablation_2            = Data augmentation: with vs without
+ablation_3            = Feature extractor: HOG vs CNN features
+ablation_4            = Optimizer: SGD vs Adam
+
+[evaluation_metrics]
+accuracy              = overall
+per_class_accuracy    = per-class
+confusion_matrix      = visualized
+precision             = macro & weighted
+recall                = macro & weighted
+f1_score              = macro & weighted
+top_k_accuracy        = top-5

@@ -1,0 +1,126 @@
+============================================================
+  Dataset Split Summary — Caltech-101
+  Generated: 2026-02-25 21:38:21
+============================================================
+  Excluded classes:  {'BACKGROUND_Google'}
+  Num classes:       101
+  Total images:      8677
+  Corrupted removed: 0
+
+  Train:   6073  (70.0%)
+  Val:     1302  (15.0%)
+  Test:    1302  (15.0%)
+
+  Leakage check:
+    Train ∩ Val  = 0
+    Train ∩ Test = 0
+    Val   ∩ Test = 0
+
+  Seed: 42
+  Stratified: Yes
+
+  Per-class breakdown:
+  Class                          Total Train   Val  Test
+  --------------------------------------------------------
+  Faces                            435   304    65    66
+  Faces_easy                       435   304    65    66
+  Leopards                         200   140    30    30
+  Motorbikes                       798   559   119   120
+  accordion                         55    39     8     8
+  airplanes                        800   560   120   120
+  anchor                            42    29     7     6
+  ant                               42    29     7     6
+  barrel                            47    33     7     7
+  bass                              54    38     8     8
+  beaver                            46    32     7     7
+  binocular                         33    23     5     5
+  bonsai                           128    90    19    19
+  brain                             98    69    14    15
+  brontosaurus                      43    30     7     6
+  buddha                            85    59    13    13
+  butterfly                         91    64    13    14
+  camera                            50    35     8     7
+  cannon                            43    30     7     6
+  car_side                         123    86    18    19
+  ceiling_fan                       47    33     7     7
+  cellphone                         59    41     9     9
+  chair                             62    43     9    10
+  chandelier                       107    75    16    16
+  cougar_body                       47    33     7     7
+  cougar_face                       69    48    11    10
+  crab                              73    51    11    11
+  crayfish                          70    49    11    10
+  crocodile                         50    35     7     8
+  crocodile_head                    51    36     8     7
+  cup                               57    40     9     8
+  dalmatian                         67    47    10    10
+  dollar_bill                       52    36     8     8
+  dolphin                           65    45    10    10
+  dragonfly                         68    48    10    10
+  electric_guitar                   75    52    12    11
+  elephant                          64    45     9    10
+  emu                               53    37     8     8
+  euphonium                         64    45    10     9
+  ewer                              85    59    13    13
+  ferry                             67    47    10    10
+  flamingo                          67    47    10    10
+  flamingo_head                     45    32     6     7
+  garfield                          34    24     5     5
+  gerenuk                           34    24     5     5
+  gramophone                        51    36     7     8
+  grand_piano                       99    69    15    15
+  hawksbill                        100    70    15    15
+  headphone                         42    29     6     7
+  hedgehog                          54    38     8     8
+  helicopter                        88    62    13    13
+  ibis                              80    56    12    12
+  inline_skate                      31    22     4     5
+  joshua_tree                       64    45    10     9
+  kangaroo                          86    60    13    13
+  ketch                            114    80    17    17
+  lamp                              61    43     9     9
+  laptop                            81    57    12    12
+  llama                             78    55    12    11
+  lobster                           41    29     6     6
+  lotus                             66    46    10    10
+  mandolin                          43    30     7     6
+  mayfly                            40    28     6     6
+  menorah                           87    61    13    13
+  metronome                         32    22     5     5
+  minaret                           76    53    12    11
+  nautilus                          55    38     8     9
+  octopus                           35    25     5     5
+  okapi                             39    27     6     6
+  pagoda                            47    33     7     7
+  panda                             38    27     5     6
+  pigeon                            45    32     7     6
+  pizza                             53    37     8     8
+  platypus                          34    24     5     5
+  pyramid                           57    40     9     8
+  revolver                          82    57    12    13
+  rhino                             59    41     9     9
+  rooster                           49    34     7     8
+  saxophone                         40    28     6     6
+  schooner                          63    44    10     9
+  scissors                          39    27     6     6
+  scorpion                          84    59    12    13
+  sea_horse                         57    40     9     8
+  snoopy                            35    25     5     5
+  soccer_ball                       64    45    10     9
+  stapler                           45    32     6     7
+  starfish                          86    60    13    13
+  stegosaurus                       59    41     9     9
+  stop_sign                         64    45     9    10
+  strawberry                        35    25     5     5
+  sunflower                         85    59    13    13
+  tick                              49    34     8     7
+  trilobite                         86    60    13    13
+  umbrella                          75    52    12    11
+  watch                            239   167    36    36
+  water_lilly                       37    26     5     6
+  wheelchair                        59    41     9     9
+  wild_cat                          34    24     5     5
+  windsor_chair                     56    39     8     9
+  wrench                            39    27     6     6
+  yin_yang                          60    42     9     9
+============================================================

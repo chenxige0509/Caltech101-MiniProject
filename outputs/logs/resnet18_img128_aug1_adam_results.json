@@ -1,0 +1,8 @@
+{
+  "model": "resnet18",
+  "image_size": 128,
+  "augment": true,
+  "optimizer_name": "adam",
+  "test_accuracy": 0.7857142857142857,
+  "top5_accuracy": 0.9362519201228878
+}

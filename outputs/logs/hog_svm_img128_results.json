@@ -1,0 +1,10 @@
+{
+  "model": "hog_svm",
+  "image_size": 128,
+  "classifier": "svm",
+  "test_accuracy": 0.49923195084485406,
+  "top5_accuracy": 0.5952380952380952,
+  "val_accuracy": 0.5099846390168971,
+  "f1_macro": 0.27379222476037607,
+  "f1_weighted": 0.4636102443853971
+}
