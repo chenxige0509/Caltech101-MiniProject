@@ -24,8 +24,8 @@ Best test accuracy in the report: **ViT-B/16 95.93%** at 224×224; HOG+LR baseli
 
 ```bash
 # Clone and enter project
-git clone https://github.com/chenxige0509/Caltech101-Mini-Project.git
-cd Caltech101-Mini-Project
+git clone https://github.com/chenxige0509/Caltech101-MiniProject.git
+cd Caltech101-MiniProject
 
 # Install dependencies (uv)
 uv sync
@@ -81,6 +81,11 @@ Results are written under:
 ├── caltech101_data_split.ipynb   # Data split + exploration
 ├── train.csv / val.csv / test.csv   # Generated from notebook (not in repo)
 ├── src/
+│   ├── config.py         # Project config, paths, seed, device
+│   ├── models.py         # CNN model factory (frozen backbone + head)
+│   ├── train.py          # CNN training loop
+│   ├── eval.py           # CNN evaluation on test set
+│   ├── train_hog.py      # HOG + SVM/LR training and evaluation
 │   └── run_all.py        # Run all experiments
 ├── report/
 │   ├── report.ltx
