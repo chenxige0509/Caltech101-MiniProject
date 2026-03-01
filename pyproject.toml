@@ -1,0 +1,20 @@
+[project]
+name = "ai-in-medicine"
+version = "0.1.0"
+description = "Caltech-101 Image Classification — AI in Medicine"
+
+requires-python = ">=3.12"
+dependencies = [
+    "certifi>=2026.2.25",
+    "ipykernel>=7.2.0",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "pillow",
+    "scikit-image>=0.26.0",
+    "scikit-learn",
+    "seaborn",
+    "torch",
+    "torchvision",
+    "tqdm",
+]
