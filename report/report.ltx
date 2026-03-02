@@ -215,79 +215,78 @@ ViT-B/16 & 224$\times$224 & True & AdamW & 95.55 & \textbf{99.31}$^*$ & 0.939 & 
 \end{table}
 
 \subsection{Baseline Confusion Matrices}
-The following figures show the confusion matrix for each baseline. Rows are true labels, columns are predicted labels; diagonal entries are correct predictions. Darker shading indicates higher counts. We include three CNN baselines and four classical baselines (HOG+SVM and HOG+LR at 64$\times$64 and 128$\times$128).
+The following figure shows the confusion matrix for each baseline. Rows are true labels, columns are predicted labels; diagonal entries are correct predictions. Darker shading indicates higher counts. We include three CNN baselines and four classical baselines (HOG+SVM and HOG+LR at 64$\times$64 and 128$\times$128).
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/resnet18_img128_aug1_adam_confusion_matrix.png}
-\caption{Confusion matrix for the ResNet-18 baseline (input size 128$\times$128, with augmentation, Adam optimizer). The model achieves 85.94\% overall test accuracy. Strong diagonal values indicate good per-class recognition; off-diagonal blocks highlight confusions between visually or semantically similar categories (e.g., animal or object subfamilies).}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/resnet18_img128_aug1_adam_confusion_matrix.png}
+\caption{ResNet-18 (128$\times$128, aug, Adam).}
 \label{fig:cm-resnet}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/efficientnet_b0_img128_aug1_adam_confusion_matrix.png}
-\caption{Confusion matrix for the EfficientNet-B0 baseline (128$\times$128, augmentation, Adam). Test accuracy is 83.95\%. EfficientNet's compound scaling yields performance comparable to ResNet-18 at the same resolution; confusion patterns reflect shared challenges across both architectures on fine-grained or low-sample classes.}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/efficientnet_b0_img128_aug1_adam_confusion_matrix.png}
+\caption{EfficientNet-B0 (128$\times$128, aug, Adam).}
 \label{fig:cm-efficientnet}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/vit_b16_img224_aug1_adam_confusion_matrix.png}
-\caption{Confusion matrix for the ViT-B/16 baseline (224$\times$224, augmentation, Adam). ViT achieves the highest baseline test accuracy (95.55\%) among the three CNNs. The patch-based transformer captures global structure well; remaining errors are concentrated in a few difficult or rare classes.}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/vit_b16_img224_aug1_adam_confusion_matrix.png}
+\caption{ViT-B/16 (224$\times$224, aug, Adam).}
 \label{fig:cm-vit}
-\end{figure}
+\end{subfigure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/hog_svm_img64_confusion_matrix.png}
-\caption{Confusion matrix for HOG+SVM at 64$\times$64. Test accuracy is 54.61\%. HOG+SVM at 128$\times$128 attains 49.92\%; the higher resolution does not improve SVM in this setup.}
+\par\medskip
+
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/hog_svm_img64_confusion_matrix.png}
+\caption{HOG+SVM (64$\times$64).}
 \label{fig:cm-hog-svm64}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/hog_svm_img128_confusion_matrix.png}
-\caption{Confusion matrix for HOG+SVM at 128$\times$128. Test accuracy is 49.92\%. The larger HOG descriptor at 128$\times$128 does not yield better classification than 64$\times$64 for the linear SVM.}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/hog_svm_img128_confusion_matrix.png}
+\caption{HOG+SVM (128$\times$128).}
 \label{fig:cm-hog-svm128}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/hog_lr_img64_confusion_matrix.png}
-\caption{Confusion matrix for HOG+LR at 64$\times$64. Test accuracy is 66.05\%. Logistic regression on the same HOG features outperforms the linear SVM at both 64 and 128 resolution.}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/hog_lr_img64_confusion_matrix.png}
+\caption{HOG+LR (64$\times$64).}
 \label{fig:cm-hog-lr64}
-\end{figure}
+\end{subfigure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{outputs/figures/hog_lr_img128_confusion_matrix.png}
-\caption{Confusion matrix for HOG+LR at 128$\times$128. Test accuracy is 65.90\%; HOG+LR at 64$\times$64 attains slightly higher (66.05\%).}
+\par\medskip
+
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/hog_lr_img128_confusion_matrix.png}
+\caption{HOG+LR (128$\times$128).}
 \label{fig:cm-hog-lr128}
+\end{subfigure}
+
+\caption{Confusion matrices for all seven baselines: (a)--(c) CNNs (ResNet-18, EfficientNet-B0, ViT-B/16) and (d)--(g) classical HOG+SVM and HOG+LR at 64$\times$64 and 128$\times$128.}
+\label{fig:cm-all}
 \end{figure}
 
 \subsection{Baseline Per-Class Accuracy}
-The following figures show per-class (per-category) accuracy for each CNN baseline: the fraction of test samples correctly classified in that class. Classes are sorted along the horizontal axis; bars indicate how well each of the 101 categories is recognized. We do not include a separate per-class accuracy figure for HOG+SVM or HOG+LR: the classical pipelines are evaluated with the same confusion matrix and classification report (precision, recall, F1 per class). Per-class accuracy and F1 for the HOG baselines can be read from the confusion matrix (diagonal entry divided by row sum for each class) or from the classification report; we do not plot the same bar-chart style as for the CNNs.
+The following figure shows per-class (per-category) accuracy for each CNN baseline: the fraction of test samples correctly classified in that class. Classes are sorted along the horizontal axis; bars indicate how well each of the 101 categories is recognized. We do not include a separate per-class accuracy figure for HOG+SVM or HOG+LR: the classical pipelines are evaluated with the same confusion matrix and classification report (precision, recall, F1 per class). Per-class accuracy and F1 for the HOG baselines can be read from the confusion matrix (diagonal entry divided by row sum for each class) or from the classification report; we do not plot the same bar-chart style as for the CNNs.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{outputs/figures/resnet18_img128_aug1_adam_per_class_accuracy.png}
-\caption{Per-class accuracy for the ResNet-18 baseline. Classes with few test samples or high visual variability often show lower bars; well-represented and distinctive categories (e.g., faces, vehicles) tend to reach high per-class accuracy. This breakdown helps identify which categories benefit most from transfer learning and where the model underperforms.}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/resnet18_img128_aug1_adam_per_class_accuracy.png}
+\caption{ResNet-18 (128$\times$128, aug, Adam).}
 \label{fig:perclass-resnet}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{outputs/figures/efficientnet_b0_img128_aug1_adam_per_class_accuracy.png}
-\caption{Per-class accuracy for the EfficientNet-B0 baseline. The pattern is similar to ResNet-18 at 128$\times$128, with shared strengths and weaknesses across classes. Comparing this figure with Figure~\ref{fig:perclass-resnet} and Figure~\ref{fig:perclass-vit} illustrates how architecture and resolution affect fine-grained performance.}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/efficientnet_b0_img128_aug1_adam_per_class_accuracy.png}
+\caption{EfficientNet-B0 (128$\times$128, aug, Adam).}
 \label{fig:perclass-efficientnet}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{outputs/figures/vit_b16_img224_aug1_adam_per_class_accuracy.png}
-\caption{Per-class accuracy for the ViT-B/16 baseline. ViT at 224$\times$224 generally attains higher bars across more classes than the two CNN baselines at 128$\times$128, consistent with its higher overall test accuracy. Remaining low-accuracy classes are candidates for targeted data augmentation or class-balanced loss in future work.}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{outputs/figures/vit_b16_img224_aug1_adam_per_class_accuracy.png}
+\caption{ViT-B/16 (224$\times$224, aug, Adam).}
 \label{fig:perclass-vit}
+\end{subfigure}
+\caption{Per-class accuracy for the three CNN baselines: ResNet-18, EfficientNet-B0, and ViT-B/16.}
+\label{fig:perclass-all}
 \end{figure}
 
 \paragraph{Summary: confusion matrices and per-class accuracy.}
@@ -299,8 +298,6 @@ The confusion matrices (Figures~\ref{fig:cm-resnet}--\ref{fig:cm-hog-lr128}) sho
 \label{sec:discussion}
 %==============================================================================
 \subsection{Observations and Ablation Studies}
-We summarize findings along the four comparison dimensions, then explain likely causes and an overall insight.
-
 \paragraph{Image size: 64$\times$64 vs.\ 128$\times$128 (and 224).}
 For ResNet-18 and EfficientNet-B0, test accuracy drops sharply at 64$\times$64 (around 60--66\% and 54--58\% depending on augment/optimizer) compared with 128 (84--86\% and 79--85\%) and 224 (91--92.5\% and 88--94.6\%). Larger resolution consistently helps; ViT-B/16 (fixed at 224) reaches the highest accuracy (95.93\% without augmentation, 95.55\% with). The 64 vs.\ 128 comparison clearly favors 128 for both architectures.
 
@@ -312,12 +309,8 @@ The classical baselines HOG+SVM and HOG+LR were evaluated at 64$\times$64 and 12
 
 \paragraph{Optimizer: SGD vs.\ Adam (and AdamW) for CNN.}
 SGD underperforms Adam and AdamW: e.g., ResNet-18 at 128 (83.33\% SGD vs.\ 85.94\% Adam/AdamW); EfficientNet-B0 at 128 (80.11\% SGD vs.\ 85.1\% AdamW). At 224, ResNet-18 reaches 92.55\% (Adam) vs.\ 91.4\% (SGD); EfficientNet-B0 reaches 94.62\% (Adam) vs.\ 89.55\% (SGD). Adam and AdamW are close; Adam is the default and performs well across families.
-
-\subsection{Cause Analysis: Why Do These Factors Affect Results?}
-Beyond reporting numbers, we interpret \emph{why} image size, augmentation, optimizer, and feature extractor lead to the observed differences.
-
 \subsection{Analysis of Performance Drivers}
-The experimental results demonstrate a clear hierarchy of factors influencing classification accuracy. The most substantial performance leap originates from the transition from hand-crafted HOG features to learned CNN representations. While HOG+LR provides a respectable baseline (66.05\% at 64$\times$64), it appears to reach a performance ceiling regardless of resolution. This suggests that the fixed geometric nature of HOG descriptors lacks the semantic depth required to navigate the 101-way decision boundaries of Caltech-101. In contrast, the pretrained CNN backbones, even with frozen weights, provide a hierarchical feature space that significantly improves class separability.
+The results indicate that the dominant performance gain comes from moving from hand-crafted HOG features to learned CNN/ViT representations. HOG+LR saturates around 66\% accuracy at 64$\times$64, whereas pretrained backbones with a linear head achieve above 90\%, showing that learned hierarchical features provide much richer class separation than fixed gradient histograms.
 
 \subsection{The Role of Input Resolution and Feature Alignment}
 Input resolution emerged as a critical bottleneck for convolutional architectures. The sharp decline in accuracy at 64$\times$64 (e.g., 60.60\% for ResNet-18) compared to 224$\times$224 (92.55\%) indicates that aggressive downsampling discards the fine-grained discriminative textures (such as the specific contours of animal species) that ImageNet-pretrained filters are tuned to detect. Furthermore, because models like ResNet and EfficientNet were originally optimized for 224-pixel inputs, feeding them smaller images likely introduces a distribution shift that hinders the performance of the pre-extracted features. ViT-B/16's superior performance (95.93\%) further underscores this, as its patch-based attention mechanism effectively captures global context that global average pooling in CNNs might compress too aggressively at lower resolutions.
@@ -338,7 +331,6 @@ This study evaluated the interplay between architectural design, input resolutio
 
 \clearpage
 %==============================================================================
-\section*{References}
 \addcontentsline{toc}{section}{References}
 \begin{thebibliography}{99}
 
